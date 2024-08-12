@@ -1,0 +1,8 @@
+services:
+  air:
+    image: cosmtrek/air:v1.52.3
+    working_dir: /app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./:/app/
