@@ -1,8 +1,34 @@
 services:
   air:
     image: cosmtrek/air:v1.52.3
+    container_name: kraitlog_api_air
     working_dir: /app
     ports:
       - "8080:8080"
     volumes:
       - ./:/app/
+    networks:
+      - kraitlog_api_network
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14
+    container_name: kraitlog_api_postgres
+    environment:
+      POSTGRES_USER: kraitlog
+      POSTGRES_PASSWORD: kraitlog
+      POSTGRES_DB: kraitlog
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - kraitlog_api_network
+
+volumes:
+  postgres_data:
+
+networks:
+  kraitlog_api_network:
+    driver: bridge
