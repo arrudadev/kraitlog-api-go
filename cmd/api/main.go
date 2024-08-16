@@ -1,19 +1,28 @@
 package main
 
 import (
-	"net/http"
+	"log"
 
+	"github.com/arrudadev/kraitlog-api/config"
+	userRoutes "github.com/arrudadev/kraitlog-api/internal/infrastructure/api/user/routes"
+	"github.com/arrudadev/kraitlog-api/internal/infrastructure/database"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	r := gin.Default()
+	config, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalf("Error loading config: %v", err)
+	}
 
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "hello world",
-		})
-	})
+	db, err := database.NewConnection(config.DBHost, config.DBPort, config.DBUser, config.DBPassword, config.DBName)
+	if err != nil {
+		log.Fatalf("Error connecting to database: %v", err)
+	}
+	defer db.Close()
 
-	r.Run() // padrão é rodar na porta 8080
+	router := gin.Default()
+	userRoutes.RegisterUserRoutes(router, db)
+
+	router.Run(":8080")
 }
