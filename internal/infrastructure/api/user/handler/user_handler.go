@@ -1,4 +1,4 @@
-package api
+package handler
 
 import (
 	"net/http"
@@ -10,10 +10,10 @@ import (
 )
 
 type UserHandler struct {
-	createUserUseCase usecase.CreateUserUseCase
+	createUserUseCase *usecase.CreateUserUseCase
 }
 
-func NewUserHandler(createUserUseCase usecase.CreateUserUseCase) *UserHandler {
+func NewUserHandler(createUserUseCase *usecase.CreateUserUseCase) *UserHandler {
 	return &UserHandler{createUserUseCase: createUserUseCase}
 }
 
