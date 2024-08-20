@@ -9,11 +9,12 @@ import (
 )
 
 type Config struct {
-	DBHost     string
-	DBPort     string
-	DBUser     string
-	DBPassword string
-	DBName     string
+	DBHost          string
+	DBMigrationHost string
+	DBPort          string
+	DBUser          string
+	DBPassword      string
+	DBName          string
 }
 
 func LoadConfig() (*Config, error) {
@@ -23,11 +24,12 @@ func LoadConfig() (*Config, error) {
 	}
 
 	config := &Config{
-		DBHost:     os.Getenv("DB_HOST"),
-		DBPort:     os.Getenv("DB_PORT"),
-		DBUser:     os.Getenv("DB_USER"),
-		DBPassword: os.Getenv("DB_PASSWORD"),
-		DBName:     os.Getenv("DB_NAME"),
+		DBHost:          os.Getenv("DB_HOST"),
+		DBMigrationHost: os.Getenv("DB_MIGRATION_HOST"),
+		DBPort:          os.Getenv("DB_PORT"),
+		DBUser:          os.Getenv("DB_USER"),
+		DBPassword:      os.Getenv("DB_PASSWORD"),
+		DBName:          os.Getenv("DB_NAME"),
 	}
 
 	if err := validateConfig(config); err != nil {

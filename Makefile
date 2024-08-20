@@ -1,4 +1,4 @@
-.PHONY: up down build restart logs
+.PHONY: up down build restart logs create-migration migrate-up migrate-down
 
 # Up development environment
 up:
@@ -20,3 +20,15 @@ restart:
 # Show logs of development environment
 logs:
 	docker compose logs -f
+
+# Create a new migration
+create-migration:
+	go run scripts/create_migration/main.go $(name)
+
+# Run migrations
+migrate-up:
+	go run scripts/run_migrations/main.go up
+
+# Rollback migrations
+migrate-down:
+	go run scripts/run_migrations/main.go down
