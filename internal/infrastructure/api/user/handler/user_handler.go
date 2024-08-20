@@ -25,11 +25,11 @@ func (handler *UserHandler) CreateUser(context *gin.Context) {
 		return
 	}
 
-	user, err := handler.createUserUseCase.Execute(createUserDTO)
+	userDTO, err := handler.createUserUseCase.Execute(createUserDTO)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	context.JSON(http.StatusCreated, gin.H{"user": user})
+	context.JSON(http.StatusCreated, gin.H{"user": userDTO})
 }

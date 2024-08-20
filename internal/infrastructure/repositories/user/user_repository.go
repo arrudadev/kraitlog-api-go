@@ -16,16 +16,43 @@ func NewUserRepositoryImplementation(db *sql.DB) repository.UserRepository {
 }
 
 func (repository *UserRepositoryImplementation) Create(user *entity.User) error {
-	_, err := repository.db.Exec("INSERT INTO USER(name, email, password) VALUES($1, $2, $3)", user.Name, user.Email, user.Password)
+	_, err := repository.
+		db.Exec(`
+			INSERT INTO users(id, first_name, last_name, email, password, created_at) 
+			VALUES($1, $2, $3, $4, $5, $6)
+		`,
+		user.ID,
+		user.FirstName,
+		user.LastName,
+		user.Email,
+		user.Password,
+		user.CreatedAt)
 
 	return err
 }
 
 func (repository *UserRepositoryImplementation) FindByEmail(email string) (*entity.User, error) {
-	row := repository.db.QueryRow("SELECT id, name, email FROM USER WHERE email = $1", email)
+	row := repository.
+		db.QueryRow(`
+			SELECT 
+				id, 
+				first_name, 
+				last_name, 
+				email, 
+				created_at, 
+				updated_at 
+			FROM users WHERE email = $1
+		`,
+		email)
 
 	user := entity.User{}
-	err := row.Scan(&user.ID, &user.Name, &user.Email)
+	err := row.Scan(
+		&user.ID,
+		&user.FirstName,
+		&user.LastName,
+		&user.Email,
+		&user.CreatedAt,
+		&user.UpdatedAt)
 
 	if err != nil {
 		return nil, err

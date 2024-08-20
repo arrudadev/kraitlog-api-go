@@ -2,8 +2,8 @@ package usecase
 
 import (
 	"github.com/arrudadev/kraitlog-api/internal/application/user/dto"
-	"github.com/arrudadev/kraitlog-api/internal/domain/user/entity"
 	"github.com/arrudadev/kraitlog-api/internal/domain/user/service"
+	"github.com/arrudadev/kraitlog-api/internal/shared/utils"
 )
 
 type CreateUserUseCase struct {
@@ -16,6 +16,25 @@ func NewCreateUserUseCase(userService service.UserService) *CreateUserUseCase {
 	}
 }
 
-func (useCase *CreateUserUseCase) Execute(dto *dto.CreateUserDTO) (*entity.User, error) {
-	return useCase.userService.Create(dto.Name, dto.Email, dto.Password)
+func (useCase *CreateUserUseCase) Execute(inputDTO *dto.CreateUserDTO) (*dto.UserDTO, error) {
+	user, err := useCase.
+		userService.Create(
+		inputDTO.FirstName,
+		inputDTO.LastName,
+		inputDTO.Email,
+		inputDTO.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	userDTO := &dto.UserDTO{
+		ID:        user.ID.String(),
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		FullName:  user.FullName(),
+		Email:     user.Email,
+		CreatedAt: utils.FormatDateTimeUTC(user.CreatedAt),
+	}
+
+	return userDTO, nil
 }

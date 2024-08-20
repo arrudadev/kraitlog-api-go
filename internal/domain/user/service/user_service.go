@@ -8,7 +8,7 @@ import (
 )
 
 type UserService interface {
-	Create(name string, email string, password string) (*entity.User, error)
+	Create(firstName, lastName, email, password string) (*entity.User, error)
 }
 
 type userService struct {
@@ -21,13 +21,13 @@ func NewUserService(userRepository repository.UserRepository) UserService {
 	}
 }
 
-func (service *userService) Create(name string, email string, password string) (*entity.User, error) {
+func (service *userService) Create(firstName, lastName, email, password string) (*entity.User, error) {
 	userExists, _ := service.userRepository.FindByEmail(email)
-	if userExists == nil {
+	if userExists != nil {
 		return nil, errors.New("email already in use")
 	}
 
-	user, err := entity.NewUser(name, email, password)
+	user, err := entity.NewUser(firstName, lastName, email, password)
 	if err != nil {
 		return nil, err
 	}
