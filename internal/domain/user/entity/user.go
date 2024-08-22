@@ -4,8 +4,8 @@ import (
 	"errors"
 	"time"
 
+	"github.com/arrudadev/kraitlog-api/internal/domain/auth/service"
 	"github.com/google/uuid"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
@@ -18,21 +18,13 @@ type User struct {
 	UpdatedAt time.Time
 }
 
-func hashPassword(password string) (string, error) {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return "", err
-	}
-
-	return string(hashedPassword), nil
-}
-
 func NewUser(firstName, lastName, email, password string) (*User, error) {
 	if firstName == "" || lastName == "" || email == "" || password == "" {
 		return nil, errors.New("all user fields are required")
 	}
 
-	hashedPassword, err := hashPassword(password)
+	authService := service.NewAuthService()
+	hashedPassword, err := authService.HashPassword(password)
 	if err != nil {
 		return nil, err
 	}
@@ -45,11 +37,6 @@ func NewUser(firstName, lastName, email, password string) (*User, error) {
 		Password:  hashedPassword,
 		CreatedAt: time.Now(),
 	}, nil
-}
-
-func (user *User) CheckPasswordHash(password string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-	return err == nil
 }
 
 func (user *User) FullName() string {
